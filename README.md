@@ -1,37 +1,36 @@
-# cpark4x Amplifier Toolkit
+# amplifier-doc-driven-dev
 
-Personal [Amplifier](https://github.com/microsoft/amplifier) recipes, bundles, skills, and templates for doc-driven development workflows.
+[Amplifier](https://github.com/microsoft/amplifier) recipes and templates for doc-driven development.
+
+## What is Doc-Driven Development?
+
+A documentation-first approach where you define the "why" and "what" before the "how":
+
+1. **Vision first** - Define problems before solutions
+2. **Epics describe WHAT** - User-focused, not technical
+3. **User stories for IMPLEMENTED features only** - No speculative docs
+4. **Templates ensure consistency** - Same structure across projects
 
 ## Quick Start
 
 ```bash
-# Clone locally
-git clone https://github.com/cpark4x/cpark4x-toolkit.git ~/Projects/toolkit
+# In an Amplifier session
+"run doc-driven-setup for my new project"
 
-# Run a recipe
-"run doc-driven-setup from my toolkit"
-
-# Or reference directly
+# Or with full context
 amplifier tool invoke recipes operation=execute \
-  recipe_path=~/Projects/toolkit/recipes/doc-driven-setup.yaml
+  recipe_path=~/Projects/toolkit/recipes/doc-driven-setup.yaml \
+  context='{"project_path": "/path/to/project", "project_name": "my-project"}'
 ```
 
-## Contents
-
-### Recipes (`recipes/`)
-
-Multi-step Amplifier workflows with agent orchestration.
+## Recipes
 
 | Recipe | Description |
 |--------|-------------|
-| `doc-driven-setup.yaml` | Bootstrap docs for new projects (interactive, approval gates) |
-| `doc-driven-setup-fast.yaml` | Bootstrap docs for new projects (fast, no gates) |
-| `canvas-epic-workflow.yaml` | Epic development lifecycle for Canvas |
-| `canvas-verification.yaml` | Verification-driven development workflow |
+| `doc-driven-setup.yaml` | Interactive setup with approval gates |
+| `doc-driven-setup-fast.yaml` | Fast setup, no approval gates |
 
-### Templates (`templates/`)
-
-Document templates for doc-driven development pattern.
+## Templates
 
 | Template | Purpose |
 |----------|---------|
@@ -41,39 +40,23 @@ Document templates for doc-driven development pattern.
 | `PRINCIPLES_TEMPLATE.md` | Decision framework for trade-offs |
 | `SUCCESS_METRICS_TEMPLATE.md` | How to measure success |
 
-### Bundles (`bundles/`)
+## Structure Tiers
 
-Amplifier bundle configurations.
+The recipe supports three documentation tiers based on project size:
 
-| Bundle | Description |
-|--------|-------------|
-| `canvas-dev` | Development bundle for Canvas/Workspaces2 |
-
-### Skills (`skills/`)
-
-Domain knowledge for Amplifier agents.
-
-| Skill | Description |
-|-------|-------------|
-| `canvas-philosophy` | Outcome-driven, verification-first principles |
-| `workspaces-patterns` | Common patterns for Workspaces2 |
-
-## Doc-Driven Development
-
-The core philosophy behind this toolkit:
-
-1. **Vision first** - Define problems before solutions
-2. **Epics describe WHAT** - User-focused, not technical
-3. **User stories for IMPLEMENTED features only** - No speculative docs
-4. **Templates ensure consistency** - Same structure across projects
-
-### Structure Tiers
-
-| Tier | Use For | Folders |
-|------|---------|---------|
-| **lean** | Small tools | 01-vision, 02-requirements/epics, templates |
+| Tier | Use For | Structure |
+|------|---------|-----------|
+| **lean** | Small tools (murmur) | 01-vision, 02-requirements/epics, templates |
 | **standard** | Medium projects | + PRINCIPLES, SUCCESS-METRICS, user-stories |
-| **full** | Large projects | + 03-technical, 04-guides, 05-design, 06-research |
+| **full** | Large projects (workspaces2) | + 03-technical, 04-guides, 05-design, 06-research |
+
+## Related Tools
+
+Part of the cpark4x Amplifier tool collection:
+
+- **amplifier-doc-driven-dev** (this repo) - Doc-driven development
+- **amplifier-session-insights** - Session analysis and insights
+- **murmur** - Local speech-to-text
 
 ## License
 
