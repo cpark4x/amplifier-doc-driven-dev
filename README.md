@@ -1,6 +1,6 @@
 # cpark4x-toolkit
 
-Personal collection of Amplifier recipes, bundles, and skills for Canvas/Workspaces development.
+Personal collection of Amplifier recipes, bundles, skills, and templates for development workflows.
 
 ## Contents
 
@@ -14,12 +14,26 @@ Custom bundle configurations and behaviors.
 
 ### Recipes (`recipes/`)
 
-Reusable multi-step workflows for Canvas development tasks.
+Reusable multi-step workflows.
 
 | Recipe | Description |
 |--------|-------------|
+| `doc-driven-setup.yaml` | Bootstrap docs for new projects (interactive, with approval gates) |
+| `doc-driven-setup-fast.yaml` | Bootstrap docs for new projects (fast, no approval gates) |
 | `canvas-epic-workflow.yaml` | Complete epic development lifecycle following Canvas iteration philosophy |
 | `canvas-verification.yaml` | Verification-driven development workflow |
+
+### Templates (`templates/`)
+
+Document templates for doc-driven development.
+
+| Template | Description |
+|----------|-------------|
+| `VISION_TEMPLATE.md` | Project vision (problems, positioning, roadmap) |
+| `EPIC_TEMPLATE.md` | Epic specification (user-focused) |
+| `USER_STORY_TEMPLATE.md` | User story (for implemented features only) |
+| `PRINCIPLES_TEMPLATE.md` | Decision framework for controversial choices |
+| `SUCCESS_METRICS_TEMPLATE.md` | How to measure success |
 
 ### Skills (`skills/`)
 
