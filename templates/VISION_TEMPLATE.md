@@ -21,9 +21,10 @@ _([Product name] | [Project codename if different])_
 
 1. [The Problems We're Solving](#1-the-problems-were-solving)
 2. [Strategic Positioning](#2-strategic-positioning)
-3. [Who This Is For](#3-who-this-is-for)
-4. [The Sequence](#4-the-sequence)
-5. [Related Documentation](#5-related-documentation)
+3. [Philosophy](#3-philosophy)
+4. [Who This Is For](#4-who-this-is-for)
+5. [The Sequence](#5-the-sequence)
+6. [Related Documentation](#6-related-documentation)
 
 ---
 
@@ -156,7 +157,31 @@ Clear boundaries help AI make correct decisions:
 
 ---
 
-## 3. Who This Is For
+## 3. Philosophy
+
+**The principles that drive every design decision.**
+
+These are not generic software principles — they're specific to what makes [Product Name] different. Two to four principles maximum. Each should be a real constraint that rules something out.
+
+### Principle 1: [Principle Name]
+
+[One to two sentences. What does this mean in practice? What does it rule out?]
+
+### Principle 2: [Principle Name]
+
+[One to two sentences. What does it mean? What does it rule out?]
+
+### Principle 3: [Principle Name]
+
+[One to two sentences.]
+
+---
+
+**Test:** If someone read only the Philosophy section, would they make correct design decisions? Does each principle explicitly rule something out?
+
+---
+
+## 4. Who This Is For
 
 ### Primary: [Primary Audience]
 
@@ -185,7 +210,7 @@ Clear boundaries help AI make correct decisions:
 
 ---
 
-## 4. The Sequence
+## 5. The Sequence
 
 **[Sequencing principle - e.g., "Individual → Memory → Collaboration"]**
 
@@ -232,7 +257,7 @@ Clear boundaries help AI make correct decisions:
 
 ---
 
-## 5. Related Documentation
+## 6. Related Documentation
 
 **Vision folder (strategic context):**
 - [02-PRINCIPLES.md](../01-vision/02-PRINCIPLES.md) - Implementation philosophy and decision framework
@@ -241,8 +266,9 @@ Clear boundaries help AI make correct decisions:
 
 **Current features and roadmap:**
 - [docs/README.md](../README.md) - Epic table showing implementation status
-- [Epics]the epics directory - Detailed feature requirements
-- [User Stories]the user stories directory - Implementation history
+- [Epics](../02-requirements/epics/) - Detailed feature requirements
+- [User Stories](../02-requirements/user-stories/) - Implementation history
+- [BACKLOG.md](../BACKLOG.md) - Strategic planning view with priorities
 
 **Implementation guidance:**
 - CLAUDE.md (see project root) - Project-specific AI guidance
@@ -265,6 +291,7 @@ Clear boundaries help AI make correct decisions:
 **Purpose of Vision Document:**
 - Define the problems in the world that need solving
 - Articulate strategic positioning (how you're different)
+- Capture the principles that drive design decisions
 - Identify target audience and why they're underserved
 - Explain sequencing and phase strategy
 - Provide decision-making context for AI (80% of purpose)
@@ -272,6 +299,7 @@ Clear boundaries help AI make correct decisions:
 **WHAT to include:**
 - User problems (real pain points)
 - Strategic differentiation (your unique positioning)
+- Philosophy (2-4 principles that constrain design decisions)
 - Target audience (who you're building for)
 - Sequencing rationale (why this order)
 - Clear boundaries (what you're NOT building)
@@ -291,7 +319,7 @@ Clear boundaries help AI make correct decisions:
 
 **For human readers (20%):**
 - Executive summary at top
-- Logical flow (problems → positioning → audience → sequence)
+- Logical flow (problems → positioning → philosophy → audience → sequence)
 - Readable without technical background
 
 **Test:** Can AI use this to make correct product decisions? Can a non-technical person understand the strategic direction?

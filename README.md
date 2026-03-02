@@ -39,6 +39,7 @@ amplifier tool invoke recipes operation=execute \
 | `USER_STORY_TEMPLATE.md` | For implemented features only |
 | `PRINCIPLES_TEMPLATE.md` | Decision framework for trade-offs |
 | `SUCCESS_METRICS_TEMPLATE.md` | How to measure success |
+| `BACKLOG_TEMPLATE.md` | Strategic planning view — epics, priorities, sprint status |
 
 ## Structure Tiers
 
@@ -47,8 +48,8 @@ The recipe supports three documentation tiers based on project size:
 | Tier | Use For | Structure |
 |------|---------|-----------|
 | **lean** | Small tools (murmur) | 01-vision, 02-requirements/epics, templates |
-| **standard** | Medium projects | + PRINCIPLES, SUCCESS-METRICS, user-stories |
-| **full** | Large projects (workspaces2) | + 03-technical, 04-guides, 05-design, 06-research |
+| **standard** | Medium projects | + PRINCIPLES, SUCCESS-METRICS, user-stories, BACKLOG |
+| **full** | Large projects (workspaces2) | + BACKLOG, 03-technical, 04-guides, 05-design, 06-research |
 
 ## Related Tools
 
