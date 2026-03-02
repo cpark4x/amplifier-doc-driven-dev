@@ -4,6 +4,8 @@
 
 These are not generic software principles—they're specific to [describe what makes your product unique].
 
+> **Two formats available:** This template uses the **Categorized format** (Core / Technical / Design / Development sections). For fast-moving projects or small teams, the **Decision-Log format** is often better — see Writing Guidelines for guidance on choosing.
+
 **Owner:** [Primary product owner - verify via git history]
 **Contributors:** [All people who shaped principles - verify via git history]
 
@@ -295,6 +297,41 @@ Patterns that violate our principles and vision.
 - Show how principles work together
 
 **Test:** Can AI use these principles to make correct implementation decisions? Can a new team member understand how to think about building this product?
+
+---
+
+## Choosing a Format
+
+### Format A: Categorized (This Template)
+
+Sections for Core Product, Technical, Design, and Development principles. Each principle has: What it means / How it guides decisions / Examples / Decision rule.
+
+**Best for:**
+- Larger teams where explicit domain separation helps
+- Products with distinct product/technical/design concerns
+- When you want to proactively define principles before decisions are made
+
+### Format B: Decision-Log (Alternative)
+
+An append-only log where each entry records a real decision that was made. No predefined categories. Add an entry when a decision is made — not before.
+
+**Structure per entry:**
+```
+## [Decision Title / Principle Name]
+
+**Decision:** [What was decided]
+
+**Why:** [Rationale — what problem does this solve? What does it protect against?]
+
+**What this rules out:** [Concrete behaviors or approaches this prohibits]
+```
+
+**Best for:**
+- Small teams or solo projects
+- Fast-moving projects where principles emerge from actual decisions
+- When you prefer documenting retrospectively (principles earned, not assumed)
+
+**Example:** See `docs/01-vision/PRINCIPLES.md` in canvas-specialists for a live Decision-Log implementation.
 
 ---
 

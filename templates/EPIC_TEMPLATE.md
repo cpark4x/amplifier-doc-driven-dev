@@ -1,7 +1,9 @@
 # Epic [Number]: [Epic Name]
 
+**Status:** Planning | In Progress | Complete  
 **Owner:** [Primary product owner for this epic - verify via git history]
 **Contributors:** [All people who built user stories - verify via git history]
+**Last Updated:** YYYY-MM-DD
 
 <!--
 Derive ownership and history from git - don't guess or assume:

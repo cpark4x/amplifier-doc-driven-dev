@@ -1,6 +1,6 @@
 # XX-YY: [User Story Title]
 
-**Epic:** [XX. Epic Name` to epic file
+**Epic:** [XX. Epic Name](../epics/XX-epic-name.md)  
 **Status:** ✅ Implemented
 
 **IMPORTANT:** Only create user story files for IMPLEMENTED features. Future work stays in the epic until ready to build.
@@ -61,4 +61,4 @@ This gives you: date, person, and changes (commit message) for each version.
 
 ---
 
-**Epic:** [XX. Epic Name` to epic file
+**Epic:** [XX. Epic Name](../epics/XX-epic-name.md)
