@@ -6,15 +6,8 @@
 **Last Updated:** YYYY-MM-DD
 
 <!--
-Derive ownership and history from git - don't guess or assume:
-
-Contributors by commit count:
+Derive ownership from git - don't guess or assume:
 git log --format="%an" -- <relevant-files> | sort | uniq -c | sort -rn
-
-Full history with dates:
-git log --format="%ad %an - %s" --date=short -- <relevant-files>
-
-Example: git log --format="%an" -- "backend/src/agent/*.ts" | sort | uniq -c | sort -rn
 -->
 
 ---
@@ -43,26 +36,21 @@ Example: git log --format="%an" -- "backend/src/agent/*.ts" | sort | uniq -c | s
 
 ### Implemented
 
-| # | Story | Owner | Created | Contributors | Last Updated |
-|---|-------|-------|---------|--------------|--------------|
-| `[XX-01](../user-stories/XX-epic-name/XX-01-story-name.md)` | Story Name | Person | YYYY-MM-DD | - | - |
-| `[XX-02](../user-stories/XX-epic-name/XX-02-story-name.md)` | Story Name | Person | YYYY-MM-DD | Person2 | YYYY-MM-DD |
+| # | Story | Owner | Created |
+|---|-------|-------|---------|
+| `[XX-01](../user-stories/XX-epic-name/XX-01-story-name.md)` | Story Name | Person | YYYY-MM-DD |
 
 **Date Format:** Always use ISO 8601 format (YYYY-MM-DD). Examples: 2025-12-15, 2025-11-20, 2025-01-05
 
 ### Future
 
-- ⏭️ **Future capability** - What users will be able to do
-- ⏭️ **Another capability** - What users will be able to do
-
-[List future work at high level. Details defined when ready to build.]
+- ⏭️ **Future capability** — What users will be able to do
 
 ---
 
 ## 5. Outcomes
 
 **Success Looks Like:**
-- [Outcome metric with target]
 - [Outcome metric with target]
 
 **We'll Measure:**
@@ -80,28 +68,10 @@ Example: git log --format="%an" -- "backend/src/agent/*.ts" | sort | uniq -c | s
 
 ---
 
-## 7. Risks & Mitigations
-
-| Risk | Impact | Probability | Strategic Response |
-|------|--------|-------------|-------------------|
-| [What could go wrong?] | H/M/L | H/M/L | [Product decision to address] |
-
----
-
-## 8. Open Questions
+## 7. Open Questions
 
 - [ ] [Strategic question]
 - [ ] [Product decision needed]
-
----
-
-## 9. Change History
-
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| v1.0 | YYYY-MM-DD | [Name] | Initial epic |
-
-**Date Format:** Always use ISO 8601 format (YYYY-MM-DD). Examples: 2025-12-15, 2025-11-20, 2025-01-05
 
 ---
 
