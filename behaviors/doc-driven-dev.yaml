@@ -1,0 +1,17 @@
+bundle:
+  name: doc-driven-dev-behavior
+  version: "2.0.0"
+  description: Composable doc-driven development capability — injects documentation discipline, skill discovery, and session habits into any Amplifier session
+
+tools:
+  - module: git+https://github.com/microsoft/amplifier-module-tool-skills@main
+    config:
+      skills_dirs:
+        - ./skills
+    visibility:
+      enabled: true
+      max_skills_visible: 50
+
+context:
+  include:
+    - doc-driven-dev:context/instructions.md
