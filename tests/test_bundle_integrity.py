@@ -152,14 +152,14 @@ def test_context_instructions_content():
     assert "# Doc-Driven Development" in content, (
         "context/instructions.md must contain a '# Doc-Driven Development' heading"
     )
-    assert "## What this means" in content, (
-        "context/instructions.md must contain a '## What this means' section"
+    assert "Alignment System" in content, (
+        "context/instructions.md must describe the alignment system"
     )
-    assert "### At session start" in content, (
-        "context/instructions.md must contain a '### At session start' section"
+    assert "How to Work With These Docs" in content, (
+        "context/instructions.md must contain a 'How to Work With These Docs' section"
     )
-    assert "### Before session close" in content, (
-        "context/instructions.md must contain a '### Before session close' section"
+    assert "80/20" in content, (
+        "context/instructions.md must contain the 80/20 Principle"
     )
 
 
