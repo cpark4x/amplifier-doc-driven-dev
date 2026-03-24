@@ -16,13 +16,47 @@ BUNDLE_MD = os.path.join(REPO_ROOT, "bundle.md")
 
 def _parse_bundle_md():
     """Parse bundle.md and return (frontmatter_dict, body_text)."""
-    with open(BUNDLE_MD) as f:
+    with open(BUNDLE_MD, encoding="utf-8") as f:
         content = f.read()
 
     if not content.startswith("---"):
         raise ValueError("bundle.md does not start with YAML frontmatter")
 
     # Find the closing ---
+    end = content.index("---", 3)
+    frontmatter_text = content[3:end].strip()
+    body = content[end + 3 :].strip()
+
+    return yaml.safe_load(frontmatter_text), body
+
+
+def _extract_bundle_refs(fm: dict) -> list[str]:
+    """Extract bundle ref strings from frontmatter includes list."""
+    return [
+        item.get("bundle", "")
+        for item in fm.get("includes", [])
+        if isinstance(item, dict)
+    ]
+
+
+def _behavior_bundle_path(ref: str) -> str:
+    """Resolve a doc-driven-dev: bundle include ref to a filesystem path."""
+    # ref is like "doc-driven-dev:behaviors/doc-driven-dev"
+    local_path = ref.split("doc-driven-dev:", 1)[-1]
+    return os.path.join(REPO_ROOT, local_path)
+
+
+def _parse_behavior_bundle_md():
+    """Parse behaviors/doc-driven-dev/bundle.md and return (frontmatter_dict, body_text)."""
+    path = os.path.join(REPO_ROOT, "behaviors", "doc-driven-dev", "bundle.md")
+    with open(path, encoding="utf-8") as f:
+        content = f.read()
+
+    if not content.startswith("---"):
+        raise ValueError(
+            "behaviors/doc-driven-dev/bundle.md does not start with YAML frontmatter"
+        )
+
     end = content.index("---", 3)
     frontmatter_text = content[3:end].strip()
     body = content[end + 3 :].strip()
@@ -62,10 +96,7 @@ def test_description_present():
 
 def test_includes_foundation_bundle():
     fm, _ = _parse_bundle_md()
-    includes = fm.get("includes", [])
-    bundle_refs = [
-        item.get("bundle", "") for item in includes if isinstance(item, dict)
-    ]
+    bundle_refs = _extract_bundle_refs(fm)
     assert any("amplifier-foundation" in ref for ref in bundle_refs), (
         "includes must reference the amplifier-foundation bundle"
     )
@@ -73,10 +104,7 @@ def test_includes_foundation_bundle():
 
 def test_includes_behavior_bundle():
     fm, _ = _parse_bundle_md()
-    includes = fm.get("includes", [])
-    bundle_refs = [
-        item.get("bundle", "") for item in includes if isinstance(item, dict)
-    ]
+    bundle_refs = _extract_bundle_refs(fm)
     assert any("behaviors/doc-driven-dev" in ref for ref in bundle_refs), (
         "includes must reference doc-driven-dev:behaviors/doc-driven-dev"
     )
@@ -106,13 +134,6 @@ def _extract_local_references(body: str) -> list[str]:
     return re.findall(r"@doc-driven-dev:([^\s\n]+)", body)
 
 
-def _behavior_bundle_path(ref: str) -> str:
-    """Resolve a doc-driven-dev: bundle include ref to a filesystem path."""
-    # ref is like "doc-driven-dev:behaviors/doc-driven-dev"
-    local_path = ref.split("doc-driven-dev:", 1)[-1]
-    return os.path.join(REPO_ROOT, local_path)
-
-
 def test_context_instructions_exists():
     """@doc-driven-dev:context/instructions.md must resolve to a real file."""
     path = os.path.join(REPO_ROOT, "context", "instructions.md")
@@ -122,21 +143,34 @@ def test_context_instructions_exists():
     )
 
 
+def test_context_instructions_content():
+    """context/instructions.md must contain the expected heading and key sections."""
+    path = os.path.join(REPO_ROOT, "context", "instructions.md")
+    with open(path, encoding="utf-8") as f:
+        content = f.read()
+
+    assert "# Doc-Driven Development" in content, (
+        "context/instructions.md must contain a '# Doc-Driven Development' heading"
+    )
+    assert "## What this means" in content, (
+        "context/instructions.md must contain a '## What this means' section"
+    )
+    assert "### At session start" in content, (
+        "context/instructions.md must contain a '### At session start' section"
+    )
+    assert "### Before session close" in content, (
+        "context/instructions.md must contain a '### Before session close' section"
+    )
+
+
 def test_behavior_bundle_exists():
     """doc-driven-dev:behaviors/doc-driven-dev must resolve to a real path."""
     fm, _ = _parse_bundle_md()
-    includes = fm.get("includes", [])
-    behavior_refs = [
-        item.get("bundle", "")
-        for item in includes
-        if isinstance(item, dict)
-        and "behaviors/doc-driven-dev" in item.get("bundle", "")
-    ]
+    bundle_refs = _extract_bundle_refs(fm)
+    behavior_refs = [ref for ref in bundle_refs if "behaviors/doc-driven-dev" in ref]
     assert behavior_refs, "No behavior bundle ref found in includes"
 
-    ref = behavior_refs[0]
-    local_path = ref.replace("doc-driven-dev:", "")
-    full_path = os.path.join(REPO_ROOT, local_path)
+    full_path = _behavior_bundle_path(behavior_refs[0])
     # Accept either a directory (with bundle.md inside) or a direct .md file
     dir_exists = os.path.isdir(full_path)
     file_exists = os.path.isfile(full_path + ".md") or os.path.isfile(
@@ -146,6 +180,34 @@ def test_behavior_bundle_exists():
         f"behaviors/doc-driven-dev must exist as a directory or .md file; "
         f"checked {full_path}"
     )
+
+
+def test_behavior_bundle_structure():
+    """behaviors/doc-driven-dev/bundle.md must have valid frontmatter with all three behaviors."""
+    fm, _ = _parse_behavior_bundle_md()
+    assert fm is not None, (
+        "behaviors/doc-driven-dev/bundle.md must have valid YAML frontmatter"
+    )
+
+    behaviors = fm.get("behaviors", [])
+    assert behaviors, (
+        "behaviors/doc-driven-dev/bundle.md must have a non-empty 'behaviors' section"
+    )
+
+    expected_names = {
+        "session-open-doc-check",
+        "session-close-discipline",
+        "decision-logging",
+    }
+    actual_names = {b.get("name") for b in behaviors if isinstance(b, dict)}
+    assert expected_names == actual_names, (
+        f"Expected behaviors {expected_names}, found {actual_names}"
+    )
+
+    for behavior in behaviors:
+        assert behavior.get("description"), (
+            f"Behavior '{behavior.get('name')}' must have a non-empty description"
+        )
 
 
 def test_all_body_local_refs_resolve():
