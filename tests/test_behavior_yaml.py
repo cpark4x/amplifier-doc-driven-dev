@@ -146,14 +146,14 @@ def test_max_skills_visible_50():
 
 
 def test_context_include_present():
-    """context.include must reference doc-driven-dev:context/instructions.md."""
+    """context.include must reference instructions file via @doc-driven-dev: prefix."""
     data = _load_behavior_yaml()
     context = data.get("context", {})
     includes = context.get("include", [])
     assert any(
-        "doc-driven-dev:context/instructions.md" in str(item) for item in includes
+        "@doc-driven-dev:context/instructions.md" in str(item) for item in includes
     ), (
-        "context.include must reference 'doc-driven-dev:context/instructions.md'; "
+        "context.include must reference '@doc-driven-dev:context/instructions.md'; "
         f"found: {includes}"
     )
 

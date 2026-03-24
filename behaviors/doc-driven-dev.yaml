@@ -14,4 +14,4 @@ tools:
 
 context:
   include:
-    - doc-driven-dev:context/instructions.md
+    - "@doc-driven-dev:context/instructions.md"
