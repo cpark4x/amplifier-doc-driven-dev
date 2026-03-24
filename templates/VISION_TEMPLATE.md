@@ -3,8 +3,6 @@ last_updated: YYYY-MM-DD
 updated_by: "[name]"
 ---
 
-# [Product Name]: Vision
-
 ## Summary
 
 (2-3 sentences: what this is, what pain it solves, who it's for.)
