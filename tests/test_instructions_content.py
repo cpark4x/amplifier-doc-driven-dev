@@ -109,8 +109,8 @@ def test_how_to_work_subsections():
     assert "start" in lower and "session" in lower, (
         "instructions.md must contain start-of-session guidance"
     )
-    assert "during" in lower or "work" in lower, (
-        "instructions.md must contain during-work guidance"
+    assert "### during work" in lower, (
+        "instructions.md must contain '### During work' subsection heading"
     )
     assert "health" in lower, "instructions.md must contain health-check guidance"
 
