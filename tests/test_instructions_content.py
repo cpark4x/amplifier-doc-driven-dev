@@ -28,28 +28,58 @@ def test_heading_alignment_system():
     )
 
 
+def _parse_table_data_rows(content: str) -> list[tuple[str, str]]:
+    """Parse markdown table data rows into (question, document) tuples.
+
+    Skips the header row and separator rows (lines with only -/|/space chars).
+    Returns a list of (col0, col1) string pairs for each data row.
+    """
+    rows = []
+    for line in content.splitlines():
+        stripped = line.strip()
+        if "|" not in stripped:
+            continue
+        # Skip separator rows (e.g. |---|---|)
+        if all(c in "-| :" for c in stripped):
+            continue
+        cells = [c.strip() for c in stripped.split("|") if c.strip()]
+        if len(cells) >= 2:
+            rows.append((cells[0], cells[1]))
+    return rows
+
+
 def test_alignment_table_has_four_docs():
-    """instructions.md must reference all four alignment docs in a table."""
+    """instructions.md must map each of the four alignment docs in a table row."""
     content = _read_instructions()
+    rows = _parse_table_data_rows(content)
+    doc_cells = [doc for _, doc in rows]
     for doc in ["VISION.md", "OUTCOMES.md", "BACKLOG.md", "AGENTS.md"]:
-        assert doc in content, (
-            f"instructions.md must reference {doc} in the alignment questions table"
+        assert any(doc in cell for cell in doc_cells), (
+            f"instructions.md alignment table must contain '{doc}' in a document column cell"
         )
 
 
 def test_alignment_table_four_questions():
-    """instructions.md must map 4 alignment questions."""
+    """instructions.md must map 4 specific alignment questions to the correct docs."""
     content = _read_instructions()
-    # The table should have at least 4 data rows — check there are 4 docs + a table structure
-    # We verify by confirming all 4 docs appear AND there's a markdown table present
-    assert "|" in content, (
-        "instructions.md must contain a markdown table (pipe characters)"
-    )
-    lines_with_pipe = [line for line in content.splitlines() if "|" in line]
-    # At minimum: header row, separator row, 4 data rows = 6 lines with pipes
-    assert len(lines_with_pipe) >= 6, (
-        "instructions.md alignment table must have at least 4 data rows (question→doc mapping)"
-    )
+    rows = _parse_table_data_rows(content)
+    # Each entry: (fragment that must appear in the question cell, expected doc)
+    expected_mappings = [
+        ("why", "VISION.md"),
+        ("measurable outcomes", "OUTCOMES.md"),
+        ("in scope", "BACKLOG.md"),
+        ("agents", "AGENTS.md"),
+    ]
+    for question_fragment, expected_doc in expected_mappings:
+        matching = [
+            (q, d)
+            for q, d in rows
+            if question_fragment.lower() in q.lower() and expected_doc in d
+        ]
+        assert matching, (
+            f"instructions.md alignment table must have a row where the question contains "
+            f"'{question_fragment}' and the document is '{expected_doc}'"
+        )
 
 
 def test_8020_principle_section():
@@ -86,12 +116,12 @@ def test_how_to_work_subsections():
 
 
 def test_five_rules_present():
-    """instructions.md must contain 5 Rules."""
+    """instructions.md must contain exactly Rules 1 through 5 (numbered)."""
     content = _read_instructions()
-    # Check for a Rules section
-    assert "Rule" in content or "Rules" in content, (
-        "instructions.md must contain a Rules section"
-    )
+    for i in range(1, 6):
+        assert f"Rule {i}" in content, (
+            f"instructions.md must contain 'Rule {i}' — all 5 numbered rules are required"
+        )
 
 
 def test_rule_1_facts_vs_judgments():
