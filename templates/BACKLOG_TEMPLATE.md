@@ -3,8 +3,6 @@ last_updated: YYYY-MM-DD
 updated_by: "[name]"
 ---
 
-# Product Backlog
-
 ## Summary
 
 (1-2 sentences: current focus, what just shipped.)

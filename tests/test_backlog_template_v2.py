@@ -54,7 +54,9 @@ def test_backlog_template_has_yaml_frontmatter():
         if line == "---":
             closing_idx = i
             break
-    assert closing_idx is not None, "Template must have closing --- for YAML frontmatter"
+    assert closing_idx is not None, (
+        "Template must have closing --- for YAML frontmatter"
+    )
 
 
 def test_backlog_template_frontmatter_has_last_updated():
@@ -68,9 +70,7 @@ def test_backlog_template_frontmatter_has_last_updated():
 def test_backlog_template_frontmatter_has_updated_by():
     """YAML frontmatter must contain updated_by field."""
     content = _read_template()
-    assert "updated_by:" in content, (
-        "YAML frontmatter must contain 'updated_by:' field"
-    )
+    assert "updated_by:" in content, "YAML frontmatter must contain 'updated_by:' field"
 
 
 def test_backlog_template_has_summary_section():
@@ -197,4 +197,31 @@ def test_no_emoji_conventions():
     content = _read_template()
     assert "Status Emoji Convention" not in content, (
         "Template must not contain emoji status conventions — lean v2 removes this"
+    )
+
+
+def test_no_top_level_heading_between_frontmatter_and_summary():
+    """No top-level (# ) heading should appear between frontmatter and ## Summary."""
+    content = _read_template()
+    lines = content.splitlines()
+    # Find the closing --- of the frontmatter
+    closing_idx = None
+    for i, line in enumerate(lines[1:], start=1):
+        if line == "---":
+            closing_idx = i
+            break
+    assert closing_idx is not None, "Frontmatter closing --- not found"
+    # Find ## Summary
+    summary_idx = None
+    for i, line in enumerate(lines):
+        if line.startswith("## Summary"):
+            summary_idx = i
+            break
+    assert summary_idx is not None, "## Summary not found"
+    # Between frontmatter close and ## Summary there must be no top-level heading
+    between = lines[closing_idx + 1 : summary_idx]
+    top_level = [line for line in between if line.startswith("# ")]
+    assert top_level == [], (
+        f"No top-level headings should appear between frontmatter and ## Summary, "
+        f"but found: {top_level}"
     )
