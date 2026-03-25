@@ -4,13 +4,14 @@ bundle:
   description: Composable doc-driven development capability — injects documentation discipline, skill discovery, and session habits into any Amplifier session
 
 tools:
-  - module: git+https://github.com/microsoft/amplifier-module-tool-skills@main
+  - module: tool-skills
+    source: git+https://github.com/microsoft/amplifier-module-tool-skills@main
     config:
       skills_dirs:
         - ./skills
-    visibility:
-      enabled: true
-      max_skills_visible: 50
+      visibility:
+        enabled: true
+        max_skills_visible: 50
 
 context:
   include:

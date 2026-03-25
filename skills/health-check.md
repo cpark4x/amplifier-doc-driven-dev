@@ -1,7 +1,7 @@
 ---
 name: health-check
 description: Run a doc-driven-dev alignment audit -- updates BACKLOG, OUTCOMES, checks vision drift, updates AGENTS.md, and reports confidence levels
-version: 1.0.0
+version: 2.0.0
 ---
 
 # Health Check

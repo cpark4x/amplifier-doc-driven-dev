@@ -25,7 +25,10 @@
 # With context:
 #   amplifier tool invoke recipes operation=execute \
 #     recipe_path=@doc-driven-dev:recipes/doc-driven-setup.yaml \
-#     context='{"project_path": "/path/to/project"}'
+#     context='{"project_path": "/path/to/project", "project_description": "A CLI tool that..."}'
+#
+# For greenfield projects, provide project_description with your concept.
+# For undocumented/stale projects, it's optional -- the recipe reads the codebase.
 #
 # =============================================================================
 
@@ -37,6 +40,7 @@ tags: ["documentation", "setup", "bootstrap", "project-init", "doc-driven", "ali
 
 context:
   project_path: ""
+  project_description: ""
 
 stages:
   # ==========================================================================
@@ -143,6 +147,12 @@ stages:
 
           {{project_assessment}}
 
+          {% if project_description %}
+          ## Project Description
+
+          {{project_description}}
+          {% endif %}
+
           ## Templates
 
           Read the VISION template for the expected structure:
@@ -151,34 +161,36 @@ stages:
           ## Your Task
 
           {% if "Greenfield" in project_assessment %}
-          **Greenfield project.** Interview the user to define the vision:
+          **Greenfield project.** Use the project description above to draft the vision.
+          Extract or infer:
 
-          1. What are you building? (1-2 sentences)
-          2. What specific pain does this solve? Who feels that pain?
-          3. What are you explicitly NOT building? (non-goals are critical for AI alignment)
-          4. What principles should guide every decision? ("We value X over Y")
+          1. What they're building (1-2 sentences)
+          2. What specific pain this solves and who feels it
+          3. What they're explicitly NOT building (non-goals -- critical for AI alignment)
+          4. What principles should guide every decision ("We value X over Y")
 
-          Keep it conversational -- 2-3 questions at a time. Don't overwhelm.
+          If the user's input is missing any of these, make reasonable inferences
+          from what they provided and note your assumptions in the output.
           {% elif "Undocumented" in project_assessment %}
           **Undocumented project.** Based on what Discovery found in the codebase,
-          draft a vision and confirm with the user:
+          draft a vision. If the user provided additional context above, incorporate it.
 
-          1. Present your best understanding of what this project does and why
-          2. Ask the user to confirm, correct, or expand
-          3. Probe for non-goals and principles that aren't obvious from the code
+          1. Draft your best understanding of what this project does and why
+          2. Infer non-goals and principles from code patterns and any user input
+          3. Note any assumptions for user review at the next approval gate
           {% else %}
           **Stale project.** Read the existing VISION.md and validate:
 
           1. Does the Summary still accurately describe what's being built?
           2. Do the Non-Goals still hold, or has scope shifted?
           3. Do the Principles still reflect how work is done?
-          4. Present any drift observations from Discovery and ask the user to resolve
+          4. Note any drift observations from Discovery for user review
           {% endif %}
 
           ## Output
 
-          After the conversation, write VISION.md to the project root using the
-          template structure. Use today's date (2026-03-24) in frontmatter.
+          Write VISION.md to the project root using the
+          template structure. Use today's date (format: YYYY-MM-DD) in frontmatter.
 
           Then provide a summary of what was written:
 
@@ -221,6 +233,12 @@ stages:
 
           {{vision_result}}
 
+          {% if project_description %}
+          ## Project Description
+
+          {{project_description}}
+          {% endif %}
+
           ## Templates
 
           Read the templates for the expected structure:
@@ -232,7 +250,7 @@ stages:
           ### Outcomes
 
           {% if "Greenfield" in project_assessment %}
-          Help the user define 2-4 measurable outcomes:
+          Define 2-4 measurable outcomes based on the vision:
 
           - Each outcome must connect to the vision ("Why It Matters")
           - Each must have a concrete measurement or signal ("How We Measure")
