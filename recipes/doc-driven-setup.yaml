@@ -2,660 +2,383 @@
 # ====================================
 #
 # Author: Chris Park
-# Source: workspaces2/docs/07-templates/recipes/
 #
-# Bootstraps documentation structure for new projects using the doc-driven
-# development pattern used across workspaces2, murmur, and amplifier-session-insights.
+# Sets up the four-document alignment system for any project state:
 #
-# PHILOSOPHY
-# ----------
-# Documentation-driven development means:
-# 1. Vision first - define problems before solutions
-# 2. Epics describe WHAT (user-focused), not HOW (technical)
-# 3. User stories only for IMPLEMENTED features (no speculative docs)
-# 4. Principles guide controversial decisions
-# 5. Structure scales with project complexity
+#   Greenfield    -- no docs, no code (or minimal code)
+#   Undocumented  -- existing codebase, no alignment docs
+#   Stale         -- alignment docs exist but have drifted from reality
 #
-# STRUCTURE TIERS
-# ---------------
-# - lean:     Small tools - 01-vision, 02-requirements/epics, templates/
-# - standard: Medium projects - adds PRINCIPLES.md, SUCCESS-METRICS.md, user-stories/
-# - full:     Large projects - adds 03-technical/, 04-guides/, 05-design/, 06-research/
+# Creates or updates:
+#   VISION.md   -- what we're building, why, for whom, principles
+#   OUTCOMES.md -- measurable results we're driving toward
+#   BACKLOG.md  -- what's built, what's next, tied to outcomes
+#   AGENTS.md   -- project context for AI sessions ("read me first")
 #
-# ALL TIERS include templates/ folder with document templates for consistency.
+# Templates are referenced via @doc-driven-dev:templates/ -- no hardcoded paths.
 #
 # USAGE
 # -----
 # In a session:
-#   "run the doc-driven-setup recipe for my new project"
+#   "run doc-driven-setup"
 #
 # With context:
 #   amplifier tool invoke recipes operation=execute \
-#     recipe_path=doc-driven-setup.yaml \
-#     context='{"project_path": "/path/to/project", "project_name": "MyProject"}'
+#     recipe_path=@doc-driven-dev:recipes/doc-driven-setup.yaml \
+#     context='{"project_path": "/path/to/project"}'
 #
-# CONVERSATIONAL FLOW
-# -------------------
-# This recipe is designed to be conversational. At each stage, the agent:
-# 1. Asks clarifying questions about your project
-# 2. Generates appropriate documentation
-# 3. Waits for approval before proceeding
-#
-# You can deny any stage to revise before continuing.
+# =============================================================================
 
 name: "doc-driven-setup"
-description: "Bootstrap documentation structure for new projects using doc-driven development patterns"
-version: "1.0.0"
+description: "Set up the four-document alignment system (VISION, OUTCOMES, BACKLOG, AGENTS) for any project -- greenfield, undocumented, or stale"
+version: "2.0.0"
 author: "Chris Park"
-tags: ["documentation", "setup", "bootstrap", "project-init", "doc-driven"]
+tags: ["documentation", "setup", "bootstrap", "project-init", "doc-driven", "alignment"]
 
 context:
-  # Required inputs (can be gathered conversationally if empty)
-  project_path: ""           # Where to create docs (e.g., /Users/chrispark/Projects/myproject)
-  project_name: ""           # Name of the project
-  project_description: ""    # One-sentence description
-  
-  # Optional inputs
-  structure_tier: "lean"     # "lean", "standard", or "full" (default: lean)
-  
-  # Template source (from this toolkit)
-  templates_path: "/Users/chrispark/Projects/toolkit/templates"
+  project_path: ""
 
 stages:
   # ==========================================================================
-  # STAGE 1: PROJECT DISCOVERY
-  # Gather project information through conversation
+  # STAGE 1: DISCOVERY
+  # Detect project state, read existing docs and code if present
   # ==========================================================================
   - name: "discovery"
     steps:
-      - id: "gather-project-info"
-        agent: "foundation:zen-architect"
-        mode: "ANALYZE"
+      - id: "detect-project-state"
+        agent: "foundation:explorer"
         prompt: |
-          You are helping set up documentation for a new project using doc-driven development.
-          
-          ## Current Context
-          
-          - Project Path: {{project_path}}
-          - Project Name: {{project_name}}
-          - Project Description: {{project_description}}
-          - Structure Tier: {{structure_tier}}
-          
-          ## Your Task
-          
-          {% if not project_path or not project_name %}
-          **INFORMATION NEEDED**
-          
-          Some required information is missing. Have a brief conversation to gather:
-          
-          1. **Project Path** - Where should docs be created?
-             - Ask: "Where is your project located? (full path)"
-          
-          2. **Project Name** - What's the project called?
-             - Ask: "What's the project name?"
-          
-          3. **Project Description** - One sentence about what it does
-             - Ask: "In one sentence, what does this project do?"
-          
-          4. **Structure Tier** - How complex is the project?
-             - Explain the options:
-               - **lean** (default): Small tools/scripts - minimal docs (vision, epics)
-               - **standard**: Medium projects - adds principles, metrics, user-stories
-               - **full**: Large projects - adds technical docs, guides, design specs
-             - Ask: "Which tier fits your project? (lean/standard/full)"
-          
-          Gather this information naturally through conversation.
-          
+          You are detecting the state of a project to set up the doc-driven-dev
+          alignment system.
+
+          ## Project Path
+
+          {% if project_path %}
+          Project path: {{project_path}}
           {% else %}
-          **INFORMATION COMPLETE**
-          
-          All required information is provided. Confirm the setup:
-          
-          - **Path:** {{project_path}}
-          - **Name:** {{project_name}}
-          - **Description:** {{project_description}}
-          - **Tier:** {{structure_tier}}
-          
-          Validate:
-          1. Does the path exist? Check with `ls -la {{project_path}}`
-          2. Is there already a docs/ folder? Check for existing documentation.
-          3. Is the tier appropriate for the description?
-          
+          No project path was provided. Use the current working directory.
           {% endif %}
-          
+
+          ## Your Task
+
+          1. **Check for existing alignment docs** at the project root:
+             - VISION.md
+             - OUTCOMES.md
+             - BACKLOG.md
+             - AGENTS.md
+
+          2. **Check for existing code/content**:
+             - Look at the top-level directory structure
+             - Check for README.md, package.json, pyproject.toml, Cargo.toml,
+               or other project manifests
+             - Note the primary language/framework if detectable
+
+          3. **Classify the project state**:
+
+             | State | Criteria |
+             |-------|----------|
+             | **Greenfield** | No alignment docs AND no meaningful code/content |
+             | **Undocumented** | No alignment docs (or only partial) BUT existing code/content |
+             | **Stale** | Alignment docs exist BUT `last_updated` is >2 weeks old OR docs don't reflect current codebase |
+
+          4. **If Undocumented or Stale**, also gather:
+             - What the project appears to do (from README, manifests, code structure)
+             - Key directories and their apparent purpose
+             - Any existing documentation (README, docs/, etc.)
+             - If Stale: what specifically has drifted (compare doc claims to current state)
+
           ## Output
-          
+
           Provide a structured summary:
-          
+
           ```
-          PROJECT SETUP SUMMARY
-          =====================
+          PROJECT STATE ASSESSMENT
+          ========================
           Path: [confirmed path]
-          Name: [confirmed name]
-          Description: [confirmed description]
-          Tier: [confirmed tier]
-          
-          Directory Status:
-          - Path exists: [yes/no]
-          - Existing docs/: [yes/no - if yes, list what exists]
-          
-          Recommended Actions:
-          - [What will be created]
-          - [Any warnings about existing files]
+          State: [Greenfield / Undocumented / Stale]
+
+          Existing alignment docs:
+          - VISION.md: [exists/missing] [if exists: last_updated date]
+          - OUTCOMES.md: [exists/missing] [if exists: last_updated date]
+          - BACKLOG.md: [exists/missing] [if exists: last_updated date]
+          - AGENTS.md: [exists/missing] [if exists: last_updated date]
+
+          Project overview:
+          - Description: [what this project appears to do, or "empty project"]
+          - Primary language/framework: [if detectable]
+          - Key directories: [list with purposes]
+
+          Drift notes (if Stale):
+          - [specific observations about what has drifted]
+
+          Recommended approach:
+          - [Create all 4 docs from scratch / Create missing docs + update existing / Update all docs to reflect current state]
           ```
-        output: "project_summary"
-        timeout: 300
+        output: "project_assessment"
+        timeout: 120
 
   # ==========================================================================
-  # STAGE 2: STRUCTURE CREATION
-  # Create directory structure and copy templates
-  # ==========================================================================
-  - name: "structure"
-    approval:
-      required: true
-      prompt: |
-        PROJECT DISCOVERY COMPLETE
-        
-        {{project_summary}}
-        
-        Ready to create the documentation structure.
-        
-        Approve to create directories and copy templates.
-        Deny to revise the project information.
-    steps:
-      - id: "create-directories"
-        agent: "foundation:zen-architect"
-        prompt: |
-          Create the documentation directory structure for this project.
-          
-          ## Project Info
-          - Path: {{project_path}}
-          - Name: {{project_name}}
-          - Tier: {{structure_tier}}
-          - Templates: {{templates_path}}
-          
-          ## Directory Structure by Tier
-          
-          ### LEAN (small tools)
-          ```
-          docs/
-            01-vision/
-              VISION.md
-            02-requirements/
-              epics/
-                README.md
-            templates/
-              VISION_TEMPLATE.md
-              EPIC_TEMPLATE.md
-              USER_STORY_TEMPLATE.md
-          ```
-          
-          ### STANDARD (medium projects)
-          ```
-          docs/
-            01-vision/
-              VISION.md
-              PRINCIPLES.md
-              SUCCESS-METRICS.md
-            02-requirements/
-              epics/
-                README.md
-              user-stories/
-                README.md
-            templates/
-              VISION_TEMPLATE.md
-              EPIC_TEMPLATE.md
-              USER_STORY_TEMPLATE.md
-              PRINCIPLES_TEMPLATE.md
-              SUCCESS_METRICS_TEMPLATE.md
-          ```
-          
-          ### FULL (large projects)
-          ```
-          docs/
-            01-vision/
-              VISION.md
-              PRINCIPLES.md
-              SUCCESS-METRICS.md
-            02-requirements/
-              epics/
-                README.md
-              user-stories/
-                README.md
-            03-technical/
-              dev-design/
-                README.md
-              architecture/
-                README.md
-            04-guides/
-              README.md
-            05-design/
-              README.md
-            06-research/
-              README.md
-            templates/
-              (all templates from workspaces2)
-          ```
-          
-          ## Tasks
-          
-          1. **Create directories** based on the tier
-             ```bash
-             mkdir -p {{project_path}}/docs/01-vision
-             mkdir -p {{project_path}}/docs/02-requirements/epics
-             # ... etc based on tier
-             ```
-          
-          2. **Copy templates** from {{templates_path}} to docs/templates/
-             ALL TIERS get these templates:
-             - VISION_TEMPLATE.md
-             - EPIC_TEMPLATE.md
-             - USER_STORY_TEMPLATE.md
-             
-             STANDARD and FULL tiers also get:
-             - PRINCIPLES_TEMPLATE.md
-             - SUCCESS_METRICS_TEMPLATE.md
-             
-             Templates go in docs/templates/, not scattered across folders.
-          
-          3. **Create placeholder READMEs** for directories
-          
-          Execute the commands and report what was created.
-          
-          ## Output
-          
-          ```
-          STRUCTURE CREATED
-          =================
-          
-          Directories:
-          - [x] docs/01-vision/
-          - [x] docs/02-requirements/epics/
-          - ... (list all created)
-          
-          Templates Copied:
-          - [x] VISION.md (from VISION_TEMPLATE.md)
-          - [x] EPIC_TEMPLATE.md
-          - ... (list all copied)
-          
-          Ready for: Vision document generation
-          ```
-        output: "structure_created"
-        timeout: 300
-
-  # ==========================================================================
-  # STAGE 3: VISION GENERATION
-  # Conversational generation of VISION.md
+  # STAGE 2: VISION
+  # Interview user about what they're building -- or validate existing VISION.md
   # ==========================================================================
   - name: "vision"
     approval:
       required: true
       prompt: |
-        STRUCTURE CREATED
-        
-        {{structure_created}}
-        
-        Ready to generate the VISION.md document through conversation.
-        
-        This will involve questions about:
-        - Problems your project solves
-        - Target audience
-        - Strategic positioning
-        - V1/V2/V3 roadmap
-        
-        Approve to start the vision conversation.
-        Deny to skip vision generation (you can fill in the template later).
+        DISCOVERY COMPLETE
+
+        {{project_assessment}}
+
+        Ready to proceed to Vision definition.
+        Approve to continue. Deny to revise the assessment.
     steps:
-      - id: "generate-vision"
+      - id: "define-vision"
         agent: "foundation:zen-architect"
-        mode: "ARCHITECT"
+        mode: "ANALYZE"
         prompt: |
-          Generate a VISION.md document for this project through conversation.
-          
-          ## Project Context
-          - Name: {{project_name}}
-          - Description: {{project_description}}
-          - Path: {{project_path}}
-          
-          ## Vision Document Structure
-          
-          The vision document needs these sections:
-          
-          ### 1. The Problems We're Solving
-          Ask about:
-          - "What specific problems does {{project_name}} solve?"
-          - "Who experiences these problems? How painful are they?"
-          - "What happens if these problems aren't solved?"
-          
-          ### 2. Strategic Positioning
-          Ask about:
-          - "What alternatives exist? How do people solve this today?"
-          - "What's your contrarian insight - why are existing solutions wrong?"
-          - "What will {{project_name}} do differently?"
-          
-          ### 3. Target Audience
-          Ask about:
-          - "Who is the primary user? Be specific."
-          - "Why are they underserved by existing solutions?"
-          - "Is there a secondary audience?"
-          
-          ### 4. The Sequence (V1/V2/V3)
-          Ask about:
-          - "What's the V1 scope? What's the minimum that validates the idea?"
-          - "What does V2 add once V1 is validated?"
-          - "What's the long-term V3 vision?"
-          
-          ## Conversation Approach
-          
-          1. Start with the project description: "{{project_description}}"
-          2. Ask 2-3 focused questions at a time
-          3. Build up the vision iteratively
-          4. Summarize what you've learned before moving to next section
-          
+          You are helping define (or validate) the project vision for the
+          doc-driven-dev alignment system.
+
+          ## Context
+
+          {{project_assessment}}
+
+          ## Templates
+
+          Read the VISION template for the expected structure:
+          @doc-driven-dev:templates/VISION_TEMPLATE.md
+
+          ## Your Task
+
+          {% if "Greenfield" in project_assessment %}
+          **Greenfield project.** Interview the user to define the vision:
+
+          1. What are you building? (1-2 sentences)
+          2. What specific pain does this solve? Who feels that pain?
+          3. What are you explicitly NOT building? (non-goals are critical for AI alignment)
+          4. What principles should guide every decision? ("We value X over Y")
+
+          Keep it conversational -- 2-3 questions at a time. Don't overwhelm.
+          {% elif "Undocumented" in project_assessment %}
+          **Undocumented project.** Based on what Discovery found in the codebase,
+          draft a vision and confirm with the user:
+
+          1. Present your best understanding of what this project does and why
+          2. Ask the user to confirm, correct, or expand
+          3. Probe for non-goals and principles that aren't obvious from the code
+          {% else %}
+          **Stale project.** Read the existing VISION.md and validate:
+
+          1. Does the Summary still accurately describe what's being built?
+          2. Do the Non-Goals still hold, or has scope shifted?
+          3. Do the Principles still reflect how work is done?
+          4. Present any drift observations from Discovery and ask the user to resolve
+          {% endif %}
+
           ## Output
-          
-          After the conversation, generate the complete VISION.md content.
-          Write it to: {{project_path}}/docs/01-vision/VISION.md
-          
-          Use the template structure from the VISION_TEMPLATE but fill in with
-          real content from the conversation. Remove template instructions and
-          placeholder text.
-          
+
+          After the conversation, write VISION.md to the project root using the
+          template structure. Use today's date (2026-03-24) in frontmatter.
+
+          Then provide a summary of what was written:
+
           ```
-          VISION DOCUMENT GENERATED
-          =========================
-          
-          File: {{project_path}}/docs/01-vision/VISION.md
-          
-          Summary:
-          - Problems: [brief list]
-          - Audience: [primary audience]
-          - V1 Focus: [one line]
-          
-          Ready for: Epic generation
+          VISION DEFINED
+          ==============
+          Summary: [the 2-3 sentence summary from VISION.md]
+          Non-Goals: [list]
+          Principles: [list]
+          Status: [Created / Updated]
           ```
-        output: "vision_generated"
-        timeout: 600
+        output: "vision_result"
+        timeout: 300
 
   # ==========================================================================
-  # STAGE 4: EPIC GENERATION
-  # Create the first V1 epic
+  # STAGE 3: OUTCOMES + BACKLOG
+  # Define measurable outcomes and initial backlog -- or update existing
   # ==========================================================================
-  - name: "epic"
+  - name: "outcomes-and-backlog"
     approval:
       required: true
       prompt: |
-        VISION DOCUMENT GENERATED
-        
-        {{vision_generated}}
-        
-        Ready to create the first epic for V1.
-        
-        Approve to generate the initial epic through conversation.
-        Deny to skip epic generation (you can create epics later).
+        VISION COMPLETE
+
+        {{vision_result}}
+
+        Ready to define outcomes and initial backlog.
+        Approve to continue. Deny to revise the vision.
     steps:
-      - id: "generate-epic"
+      - id: "define-outcomes-and-backlog"
         agent: "foundation:zen-architect"
         mode: "ARCHITECT"
         prompt: |
-          Generate the first epic for {{project_name}}.
-          
-          ## Context
-          - Project: {{project_name}}
-          - Description: {{project_description}}
-          - Vision: {{vision_generated}}
-          
-          ## Epic Generation
-          
-          Ask questions to understand the first epic:
-          
-          1. "What's the most important capability for V1?"
-          2. "What user problem does this epic solve?"
-          3. "What should users be able to DO when this epic is complete?"
-          4. "What are the success criteria?"
-          
-          ## Epic Structure
-          
-          The epic should follow this format:
-          
-          ```markdown
-          # Epic 01: [Epic Name]
-          
-          **Owner:** [To be assigned]
-          
-          ## 1. Summary
-          [2-3 sentences: What, Why, Who benefits]
-          
-          ## 2. Problem
-          [User problem this addresses]
-          
-          ## 3. Proposed Solution
-          [What capability users will have - user terms, not technical]
-          
-          ## 4. User Stories
-          
-          ### Implemented
-          (None yet - stories created when features are built)
-          
-          ### Future
-          - [Capability 1]
-          - [Capability 2]
-          - [Capability 3]
-          
-          ## 5. Outcomes
-          **Success Looks Like:**
-          - [Measurable outcome]
-          
-          ## 6. Dependencies
-          **Requires:** [Prerequisites]
-          **Enables:** [What this makes possible]
-          
-          ## 7. Open Questions
-          - [ ] [Question to resolve]
-          ```
-          
-          ## Output
-          
-          Write the epic to: {{project_path}}/docs/02-requirements/epics/01-[epic-name].md
-          
-          Use kebab-case for the filename (e.g., 01-core-functionality.md).
-          
-          ```
-          EPIC GENERATED
-          ==============
-          
-          File: {{project_path}}/docs/02-requirements/epics/01-[name].md
-          
-          Epic: [Epic Name]
-          Problem: [One line]
-          Key Capabilities:
-          - [Capability 1]
-          - [Capability 2]
-          
-          Ready for: Navigation setup
-          ```
-        output: "epic_generated"
-        timeout: 600
+          You are helping define (or update) measurable outcomes and the initial
+          backlog for the doc-driven-dev alignment system.
 
-  # ==========================================================================
-  # STAGE 5: NAVIGATION SETUP
-  # Create docs/README.md with links to all documentation
-  # ==========================================================================
-  - name: "navigation"
-    steps:
-      - id: "create-readme"
-        agent: "foundation:zen-architect"
-        prompt: |
-          Create the docs/README.md navigation file.
-          
           ## Context
-          - Project: {{project_name}}
-          - Description: {{project_description}}
-          - Tier: {{structure_tier}}
-          - Structure: {{structure_created}}
-          - Vision: {{vision_generated}}
-          - Epic: {{epic_generated}}
-          
-          ## README Structure
-          
-          Create a navigation README that:
-          
-          1. **Introduces the documentation** - Brief project overview
-          2. **Links to key documents** - Vision, Principles (if standard+), Epics
-          3. **Shows epic status table** - Track what's implemented
-          4. **Explains the structure** - Help newcomers navigate
-          
-          ## Template
-          
-          ```markdown
-          # {{project_name}} Documentation
-          
-          {{project_description}}
-          
-          ---
-          
-          ## Quick Links
-          
-          | Document | Purpose |
-          |----------|---------|
-          | [VISION](01-vision/VISION.md) | Problems, positioning, roadmap |
-          | [Epics](02-requirements/epics/) | What we're building |
-          {% if structure_tier != 'lean' %}
-          | [PRINCIPLES](01-vision/PRINCIPLES.md) | Decision framework |
-          | [SUCCESS-METRICS](01-vision/SUCCESS-METRICS.md) | How we measure success |
-          | [User Stories](02-requirements/user-stories/) | Implemented features |
+
+          {{project_assessment}}
+
+          {{vision_result}}
+
+          ## Templates
+
+          Read the templates for the expected structure:
+          @doc-driven-dev:templates/OUTCOMES_TEMPLATE.md
+          @doc-driven-dev:templates/BACKLOG_TEMPLATE.md
+
+          ## Your Task
+
+          ### Outcomes
+
+          {% if "Greenfield" in project_assessment %}
+          Help the user define 2-4 measurable outcomes:
+
+          - Each outcome must connect to the vision ("Why It Matters")
+          - Each must have a concrete measurement or signal ("How We Measure")
+          - Don't force metrics where signals are more honest (e.g., "users report less confusion" is fine)
+          {% elif "Undocumented" in project_assessment %}
+          Based on the codebase and vision, propose outcomes and confirm:
+
+          - What would "success" look like for this project?
+          - What signals would tell you it's working?
+          {% else %}
+          Validate existing OUTCOMES.md against current reality:
+
+          - Are the outcomes still the right ones?
+          - Are the statuses accurate?
+          - Should any outcomes be retired or added?
           {% endif %}
-          
-          ---
-          
-          ## Epic Status
-          
-          | # | Epic | Status | Description |
-          |---|------|--------|-------------|
-          | 01 | [Epic Name](02-requirements/epics/01-name.md) | In Progress | Brief description |
-          
-          **Status Legend:** Planning | In Progress | Complete
-          
-          ---
-          
-          ## Documentation Structure
-          
-          ```
-          docs/
-            01-vision/          # Strategic direction
-            02-requirements/    # What we're building
-              epics/           # High-level features
-              user-stories/    # Implemented capabilities
-          ```
-          
-          ---
-          
-          ## Contributing
-          
-          - **Vision changes**: Rare, require broad alignment
-          - **New epics**: Discuss in planning before creating
-          - **User stories**: Created ONLY when implementing a feature
-          - **Principles**: Evolve as we learn
-          ```
-          
+
+          ### Backlog
+
+          {% if "Greenfield" in project_assessment %}
+          Create an initial backlog:
+
+          - Every item must trace to an outcome ("Drives Outcome")
+          - Start with 3-5 items in Active or Up Next
+          - Done section starts empty
+          {% elif "Undocumented" in project_assessment %}
+          Build backlog from what exists:
+
+          - What's already built goes in Done (with "Driven By" attribution)
+          - What's in progress goes in Active
+          - What's next goes in Up Next
+          - Every item traces to an outcome
+          {% else %}
+          Update existing BACKLOG.md:
+
+          - Move completed items to Done
+          - Add missing items discovered from the codebase
+          - Verify every item traces to a current outcome
+          {% endif %}
+
           ## Output
-          
-          Write to: {{project_path}}/docs/README.md
-          
-          Customize based on the actual structure tier and generated content.
-          
+
+          Write both files to the project root using the template structures.
+          Use today's date in frontmatter.
+
+          Then provide a summary:
+
           ```
-          NAVIGATION CREATED
-          ==================
-          
-          File: {{project_path}}/docs/README.md
-          
-          Links to:
-          - Vision: [path]
-          - Epic: [path]
-          - ... (list all linked docs)
+          OUTCOMES + BACKLOG DEFINED
+          =========================
+          Outcomes: [count] defined
+          - [Outcome 1]: [Status]
+          - [Outcome 2]: [Status]
+
+          Backlog:
+          - Active: [count] items
+          - Up Next: [count] items
+          - Done: [count] items
+
+          Status: [Created / Updated]
           ```
-        output: "readme_created"
+        output: "outcomes_backlog_result"
         timeout: 300
 
-      - id: "final-summary"
+  # ==========================================================================
+  # STAGE 4: PROJECT CONTEXT
+  # Create AGENTS.md -- the "read me first" file for AI sessions
+  # ==========================================================================
+  - name: "project-context"
+    approval:
+      required: true
+      prompt: |
+        OUTCOMES + BACKLOG COMPLETE
+
+        {{outcomes_backlog_result}}
+
+        Ready to create the project context file (AGENTS.md).
+        Approve to continue. Deny to revise outcomes or backlog.
+    steps:
+      - id: "create-agents-md"
         agent: "foundation:zen-architect"
+        mode: "ARCHITECT"
         prompt: |
-          Provide a final summary of what was created.
-          
-          ## Created Items
-          - Structure: {{structure_created}}
-          - Vision: {{vision_generated}}
-          - Epic: {{epic_generated}}
-          - README: {{readme_created}}
-          
-          ## Final Summary
-          
-          Provide a clean summary for the user:
-          
+          You are creating (or updating) AGENTS.md -- the static project context
+          file that every AI session reads first.
+
+          ## Context
+
+          {{project_assessment}}
+
+          {{vision_result}}
+
+          {{outcomes_backlog_result}}
+
+          ## Template
+
+          Read the template for the expected structure:
+          @doc-driven-dev:templates/AGENTS_TEMPLATE.md
+
+          ## Your Task
+
+          Write AGENTS.md to the project root. This file must:
+
+          1. **What This Is** -- 1-2 sentences from the vision summary
+          2. **Current Focus** -- pulled from the Active backlog items
+          3. **Key Decisions** -- any significant decisions made during this setup
+          4. **Project Structure** -- key directories and their purpose (from Discovery)
+          5. **Docs** -- links to VISION.md, OUTCOMES.md, BACKLOG.md
+          6. **How We Work** -- conventions for AI autonomy, human approval, uncertainty handling
+
+          Use today's date in frontmatter.
+
+          ## Output
+
+          After writing the file, confirm:
+
           ```
-          DOC-DRIVEN SETUP COMPLETE
+          ALIGNMENT SYSTEM COMPLETE
           =========================
-          
-          Project: {{project_name}}
-          Location: {{project_path}}/docs/
-          Tier: {{structure_tier}}
-          
-          Created:
-          --------
-          [List all files created with full paths]
-          
-          Next Steps:
-          -----------
-          1. Review VISION.md and refine the problems/positioning
-          2. Add more epics as you plan features
-          3. Create user stories ONLY when implementing features
-          {% if structure_tier != 'lean' %}
-          4. Fill in PRINCIPLES.md as you make design decisions
-          5. Define SUCCESS-METRICS.md before measuring anything
-          {% endif %}
-          
-          Quick Start:
-          ------------
-          cd {{project_path}}/docs
-          cat README.md
-          
-          Happy building!
+
+          Files at project root:
+          - [x] VISION.md -- what we're building and why
+          - [x] OUTCOMES.md -- measurable results and status
+          - [x] BACKLOG.md -- what's built, what's next
+          - [x] AGENTS.md -- project context for AI sessions
+
+          Next steps:
+          1. Review VISION.md non-goals -- these are your AI's guardrails
+          2. Run "health check" after your next PR to keep docs current
+          3. At session start, read AGENTS.md for full project context
           ```
-        output: "final_summary"
-        timeout: 120
+        output: "setup_complete"
+        timeout: 300
 
 # ==========================================================================
 # EXPECTED OUTPUTS
 # ==========================================================================
 #
 # After full execution:
-# - project_summary: Validated project information
-# - structure_created: Directory structure and templates
-# - vision_generated: Complete VISION.md
-# - epic_generated: First V1 epic
-# - readme_created: Navigation README
-# - final_summary: Complete summary of what was created
+# - project_assessment: Project state detection and codebase overview
+# - vision_result: Vision definition or validation summary
+# - outcomes_backlog_result: Outcomes and backlog definition or update summary
+# - setup_complete: Final confirmation with file list and next steps
 #
-# Files created (lean tier):
-# - docs/README.md
-# - docs/01-vision/VISION.md
-# - docs/02-requirements/epics/README.md
-# - docs/02-requirements/epics/01-[first-epic].md
-# - docs/templates/VISION_TEMPLATE.md
-# - docs/templates/EPIC_TEMPLATE.md
-# - docs/templates/USER_STORY_TEMPLATE.md
-#
-# Additional files (standard tier):
-# - docs/01-vision/PRINCIPLES.md
-# - docs/01-vision/SUCCESS-METRICS.md
-# - docs/02-requirements/user-stories/README.md
-# - docs/templates/PRINCIPLES_TEMPLATE.md
-# - docs/templates/SUCCESS_METRICS_TEMPLATE.md
-#
-# Additional directories (full tier):
-# - docs/03-technical/
-# - docs/04-guides/
-# - docs/05-design/
-# - docs/06-research/
-# - docs/templates/ (all templates from workspaces2)
+# Files created/updated (all at project root):
+# - VISION.md    -- problem, solution, non-goals, audience, principles
+# - OUTCOMES.md  -- measurable outcomes table with status tracking
+# - BACKLOG.md   -- active / up-next / done work items tied to outcomes
+# - AGENTS.md    -- project context, structure, conventions, doc links

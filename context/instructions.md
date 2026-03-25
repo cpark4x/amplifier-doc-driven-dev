@@ -11,7 +11,7 @@ Four documents answer the four questions that matter most for every decision mad
 | Why does this project exist and what does success look like? | `VISION.md` |
 | What measurable outcomes are we driving toward? | `OUTCOMES.md` |
 | What work is in scope, prioritized, and in progress? | `BACKLOG.md` |
-| Which agents and roles are involved in this project? | `AGENTS.md` |
+| How is this project structured and how do we work in it? | `AGENTS.md` |
 
 Before taking action, locate the answer in one of these documents. If the answer is missing, surface the gap rather than guessing.
 
@@ -38,7 +38,7 @@ This means: prefer completeness over brevity, precision over prose, and facts ov
 
 - Every decision you make should be traceable to one of the four documents.
 - If a decision requires information not in the docs, note it — it belongs in the relevant document before the session closes.
-- When scope creep appears, consult `BACKLOG.md` non-goals before proceeding.
+- When scope creep appears, consult `VISION.md` non-goals and `BACKLOG.md` priorities before proceeding.
 - Update docs in place as you learn — don't defer to "clean up later."
 
 ### Health check
@@ -46,7 +46,7 @@ This means: prefer completeness over brevity, precision over prose, and facts ov
 Use this checklist to verify alignment before closing a session:
 
 - [ ] Does `BACKLOG.md` reflect what was actually built?
-- [ ] Are all in-progress epics updated with current status?
+- [ ] Are active backlog items updated with current status?
 - [ ] Did any decisions surface that belong in `VISION.md` or `OUTCOMES.md`?
 - [ ] Are all learnings recorded inline (not deferred)?
 - [ ] Is attribution clear for any AI-generated content?
@@ -60,7 +60,7 @@ Facts (status changes, file paths, completed tasks) can be updated without askin
 A task without an outcome connection is undirected effort. Before adding or working on a backlog item, confirm it traces to a measurable outcome in `OUTCOMES.md`.
 
 **Rule 3: Non-Goals are boundaries, not suggestions.**
-Non-goals defined in `VISION.md` or `BACKLOG.md` are hard constraints. Do not work around them, suggest alternatives that violate them, or treat them as negotiable without explicit human approval.
+Non-goals defined in `VISION.md` and scope boundaries recorded in `BACKLOG.md` are hard constraints. Do not work around them, suggest alternatives that violate them, or treat them as negotiable without explicit human approval.
 
 **Rule 4: Learnings are inline, not separate.**
 Discoveries, corrections, and context updates belong in the document they affect — not in a separate "learnings" file or deferred to the end of the session. Inline learnings compound; separate files decay.

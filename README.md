@@ -1,35 +1,40 @@
-# amplifier-doc-driven-dev
+# doc-driven-dev
 
-You build fast with AI. Three weeks later, no one can explain why the caching layer uses Redis instead of Memcached, or why the API is REST instead of GraphQL. The AI that made those choices didn't write down the reasoning. The next AI that touches the code won't know either.
+An alignment system for human-AI collaboration.
 
-amplifier-doc-driven-dev fixes this by making documentation the first step, not the last. A conversational recipe interviews you about the vision, problems, and audience, then scaffolds a complete docs structure that both humans and AI can reference from day one.
+When AI does most of the building, work accumulates fast. Three weeks in, no one can explain why the caching layer uses Redis instead of Memcached, whether the project is actually on track, or what was decided last Tuesday. The AI that made those choices didn't write down the reasoning. The next AI that touches the code won't know either.
 
-## What you get
+doc-driven-dev keeps humans and AI aligned by maintaining four living documents that answer the only questions that matter mid-project:
 
-Run `"run doc-driven-setup for my new project"` in an Amplifier session. A 5-stage conversational setup walks you through:
+| Question | Document |
+|----------|----------|
+| Is what we're building still what we set out to build? | **VISION.md** |
+| Is the work accruing to something measurable? | **OUTCOMES.md** |
+| What's built, what's not, what's next? | **BACKLOG.md** |
+| What does a new AI session need to know first? | **AGENTS.md** |
 
-1. **Discovery** — project name, description, structure tier
-2. **Structure** — creates the docs directory with templates
-3. **Vision** — interviews you, writes `VISION.md` (problems, positioning, V1/V2/V3 roadmap)
-4. **First epic** — interviews you, writes the first epic spec
-5. **Navigation** — creates a `docs/README.md` hub linking everything together
+## Three project states, one recipe
 
-Three tiers to match your project's size:
+The setup recipe detects your project's state and adapts:
 
-| Tier | For | What you get |
-|------|-----|-------------|
-| **lean** | Small tools | Vision + epics + templates |
-| **standard** | Medium projects | + principles, success metrics, backlog |
-| **full** | Large projects | + technical docs, guides, design, research |
+| State | What happens |
+|-------|-------------|
+| **Greenfield** -- no docs, no code | Interviews you, creates all 4 docs from scratch |
+| **Undocumented** -- existing code, no alignment docs | Reads the codebase first, creates docs that reflect what exists |
+| **Stale** -- docs exist but drifted | Reads existing docs + codebase, updates to reflect current reality |
 
-## The session-close discipline
+## The health check
 
-Documentation drift happens because "later" never comes. Every session auto-reminds you: before ending, run the session-close checklist. Two minutes:
+Docs drift because "later" never comes. The health check skill audits alignment on demand:
 
-- Uncommitted changes? Commit and push.
-- Epics that shipped but still show "In Progress"? Update them.
-- Backlog reflect what was built? Update it.
-- Unpushed commits? Push them.
+1. Reads all 4 docs + recent git history
+2. Updates BACKLOG.md with completed work (auto)
+3. Updates OUTCOMES.md statuses (auto)
+4. Flags vision drift against non-goals and principles (human decision)
+5. Updates AGENTS.md current focus (auto)
+6. Reports with confidence levels -- what it's sure about, what needs human review
+
+Run it after merging a PR: `load_skill(skill_name="health-check")`
 
 ## Quick start
 
@@ -39,8 +44,16 @@ amplifier bundle add git+https://github.com/cpark4x/amplifier-doc-driven-dev@mai
 
 Then in any Amplifier session:
 
-*"Run doc-driven-setup for my new project"*
+```
+"run doc-driven-setup"
+```
+
+The 4-stage recipe walks you through discovery, vision, outcomes + backlog, and project context -- with approval gates between each stage.
+
+## The 80/20 principle
+
+Docs are **80% for AI context, 20% for human confidence**. Every doc has a summary at the top (the human glance layer) and detail below (the AI context layer). The human reads summaries to confirm alignment. The AI reads everything to make good autonomous decisions.
 
 ## Built by
 
-[Chris Park](https://www.linkedin.com/in/chrispark) — Microsoft Office of the CTO, AI Incubation. Building the tools he actually uses.
+[Chris Park](https://www.linkedin.com/in/chrispark) -- Microsoft Office of the CTO, AI Incubation. Building the tools he actually uses.
